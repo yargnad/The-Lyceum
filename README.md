@@ -6,42 +6,43 @@ The Lyceum is an open-source, community-owned, and decentralized communication a
 
 ## Core Principles
 
-* **Open Source:** All software and hardware designs are licensed under the GPLv3. The project is transparent and open to all contributors.
-* **Decentralized:** The network is peer-to-peer. There are no central servers, no single point of failure, and no kill switch.
-* **Private:** All communication on the network's core mesh layer is encrypted by default using AES256.
+* **Open Source:** All software and hardware designs are licensed under the GPLv3.
+* **Decentralized:** The network is peer-to-peer. There are no central servers.
+* **Private:** All communication is encrypted by default using AES256.
 * **User-Owned:** The infrastructure is built, owned, and operated by its users.
-* **Resilient:** The network is designed to function entirely off-grid, making it ideal for remote areas, emergency communications, and creating a true internet alternative.
+* **Resilient:** The network is designed to function entirely off-grid.
 
 ## How It Works (The Three Layers)
 
 The network operates on a unique multi-layered architecture:
 
-1. **Access Mesh (LoRa):** The base layer for everyone. A long-range, low-power mesh for text, GPS, and sensor data. This is where you start.
-2. **Utility Fabric (Wi-Fi HaLow):** A higher-bandwidth layer for local applications, including the future home of our federated AI and compute resources.
-3. **Backbone Link (MURS):** A long-distance radio link to connect communities and reduce reliance on the traditional internet.
+1.  **Access Mesh (LoRa):** The base layer for everyone. A long-range, low-power mesh for text, GPS, and sensor data. This is where you start.
+2.  **Utility Fabric (Wi-Fi HaLow):** A higher-bandwidth layer for local applications and the home of our federated AI, "Pneuma."
+3.  **Backbone Link (MURS):** A long-distance radio link to connect communities and reduce reliance on the traditional internet.
+
+## The Vision: A Sovereign App Ecosystem
+
+The Lyceum isn't just for communication; it's a platform for creation. Our long-term vision includes a complete, user-owned application ecosystem.
+* **"Symbolons":** Developers will be able to offer self-contained apps as a "small gift" or "contribution" to the network.
+* **"The Agora":** A decentralized, AI-powered app store where users can discover and activate new apps with simple prompts.
+* **Pneuma's Protection:** Our network AI, "Pneuma," will automatically vet all apps for safety and efficiency, protecting the commons from malicious actors.
+* **Host Your Own:** When you activate an app, it's hosted on your own node. Your investment in hardware is directly rewarded with a faster, more resilient experience.
 
 ## 🚀 Getting Started: The AI Walkie-Talkie
 
 The best way to join the network is to build our first application: the AI-Enhanced Walkie-Talkie.
 
-1. **Get the Hardware:** You'll need a LoRa-capable development board. We strongly recommend hardware supported by the [Meshtastic Project](https://meshtastic.org/docs/hardware), such as:
-   * Heltec V3
-   * RAK Wireless Kits
-   * LILYGO T-Echo
-
-2. **Flash Meshtastic:** Follow the excellent Meshtastic documentation to flash the latest firmware onto your device. This will get you connected to the base LoRa mesh.
-
-3. **Install the Client:** Use the official Meshtastic mobile app for Android or iOS to connect to your device via Bluetooth. You can now send text messages and see other users on the mesh!
-
-4. **Join the Lyceum Development:** Our immediate goal is to fork the Meshtastic client and build the STT/TTS "walkie-talkie" functionality. All development will happen here.
+1.  **Get the Hardware:** You'll need a LoRa-capable development board. We strongly recommend hardware supported by the [Meshtastic Project](https://meshtastic.org/docs/hardware).
+2.  **Flash Meshtastic:** Follow the excellent Meshtastic documentation to flash the latest firmware onto your device.
+3.  **Join the Lyceum Development:** Our immediate goal is to fork the Meshtastic client and build the STT/TTS "walkie-talkie" functionality. All development will happen here.
 
 ## How to Contribute
 
 This is a community effort. We need your help!
 
-* **Developers:** Fork this repository! Check the `Issues` tab for our project roadmap. Submit a pull request to contribute code for the client app, device firmware, or compute node software.
-* **Hardware Hackers:** Design and share schematics for our self-contained "walkie-talkie" device. Create and test high-gain antennas for the MURS backbone.
-* **Everyone:** Buy a node! The single most important contribution you can make is expanding the physical network. Run a node, test the software, report bugs, help with documentation, and tell your friends.
+* **Developers:** Fork this repository! Help us build the AI Walkie-Talkie, the Pneuma compute layer, and the Symbolon app framework.
+* **Hardware Hackers:** Design and share schematics for our self-contained "walkie-talkie" device and MURS backbone nodes.
+* **Everyone:** Buy a node! The single most important contribution you can make is expanding the physical network.
 
 ## License
 
