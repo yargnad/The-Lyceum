@@ -4,45 +4,35 @@
 
 The Lyceum is an open-source, community-owned, and decentralized communication and compute network. We are building a resilient, privacy-first alternative to the corporate internet. This project is a public commons, not a company.
 
-## Core Principles
+## Our Doctrine: Radical Resourcefulness
 
-* **Open Source:** All software and hardware designs are licensed under the GPLv3.
-* **Decentralized:** The network is peer-to-peer. There are no central servers.
-* **Private:** All communication is encrypted by default using AES256.
-* **User-Owned:** The infrastructure is built, owned, and operated by its users.
-* **Resilient:** The network is designed to function entirely off-grid.
+We reject the endless cycle of engineered obsolescence. The Lyceum is built to honor and utilize any hardware you can contribute, from a brand-new single-board computer to a dusty laptop in your closet. In our commons, nothing is wasted.
 
-## How It Works (The Three Layers)
+## How to Participate: Choose Your Role
 
-The network operates on a unique multi-layered architecture:
+There are many ways to contribute, from simply using the network to providing its core compute power. Here’s a guide to the hardware paths:
 
-1.  **Access Mesh (LoRa):** The base layer for everyone. A long-range, low-power mesh for text, GPS, and sensor data. This is where you start.
-2.  **Utility Fabric (Wi-Fi HaLow):** A higher-bandwidth layer for local applications and the home of our federated AI, "Pneuma."
-3.  **Backbone Link (MURS):** A long-distance radio link to connect communities and reduce reliance on the traditional internet.
-
-## The Vision: A Sovereign App Ecosystem
-
-The Lyceum isn't just for communication; it's a platform for creation. Our long-term vision includes a complete, user-owned application ecosystem.
-* **"Symbolons":** Developers will be able to offer self-contained apps as a "small gift" or "contribution" to the network.
-* **"The Agora":** A decentralized, AI-powered app store where users can discover and activate new apps with simple prompts.
-* **Pneuma's Protection:** Our network AI, "Pneuma," will automatically vet all apps for safety and efficiency, protecting the commons from malicious actors.
-* **Host Your Own:** When you activate an app, it's hosted on your own node. Your investment in hardware is directly rewarded with a faster, more resilient experience.
+| Role / Tier         | Example Device(s)                  | Approx. Cost             | Key Compute Resource | Ideal "Pneuma" Task                                |
+| :------------------ | :--------------------------------- | :----------------------- | :------------------- | :------------------------------------------------- |
+| **"Scout"** | Heltec V4 (ESP32-S3)               | $25 - $30                | Bluetooth to Smartphone | **Client Only.** Uses phone for STT/TTS.           |
+| **"Sovereign AIWT"**| Radxa Zero 3W + LoRa HAT           | $80 - $100               | **NPU** (on-device AI) | **Pneuma Guardian (Vetting):** On-device STT/TTS, App Vetting |
+| **"GPU Guardian"** | Orange Pi Zero 3 + HAT             | $75 - $95                | **Mali GPU** (Parallel) | **Expert Symbolons:** Image/Signal processing      |
+| **"Legacy Guardian"** | Old Gaming PC/Laptop (GTX 960m+) | **$0 (Existing Hardware)** | **CUDA Cores** | **Specialist Experts:** Audio, small CV/NLP models |
+| **"Genesis Node"** | Orange Pi 5 / Rock 5B              | $150+                    | **High-Power NPU & GPU** | **Core Host:** Gating Network & multiple Experts   |
 
 ## 🚀 Getting Started: The AI Walkie-Talkie
 
 The best way to join the network is to build our first application: the AI-Enhanced Walkie-Talkie.
 
-1.  **Get the Hardware:** You'll need a LoRa-capable development board. We strongly recommend hardware supported by the [Meshtastic Project](https://meshtastic.org/docs/hardware).
+1.  **Get the Hardware:** Pick a path from the matrix above. We recommend starting with a **"Scout"** build (e.g., a Heltec V4) for the lowest cost of entry.
 2.  **Flash Meshtastic:** Follow the excellent Meshtastic documentation to flash the latest firmware onto your device.
 3.  **Join the Lyceum Development:** Our immediate goal is to fork the Meshtastic client and build the STT/TTS "walkie-talkie" functionality. All development will happen here.
 
 ## How to Contribute
 
-This is a community effort. We need your help!
-
-* **Developers:** Fork this repository! Help us build the AI Walkie-Talkie, the Pneuma compute layer, and the Symbolon app framework.
-* **Hardware Hackers:** Design and share schematics for our self-contained "walkie-talkie" device and MURS backbone nodes.
-* **Everyone:** Buy a node! The single most important contribution you can make is expanding the physical network.
+* **Developers:** Fork this repository! Help us build the AI Walkie-Talkie, the universal Pneuma Daemon, and the Symbolon app framework.
+* **Hardware Hackers:** Design and share schematics for our self-contained devices and MURS backbone nodes.
+* **Everyone:** Buy or repurpose a node! The single most important contribution is expanding the physical network.
 
 ## License
 
