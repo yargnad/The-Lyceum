@@ -1,7 +1,7 @@
 # The Lyceum: AIWT (AI Walkie-Talkie) Build Guide
 
-**Version:** 0.2 - October 21, 2025
-**Status:** DRAFT - Architectural Workflow
+**Version:** 0.3 - October 21, 2025
+**Status:** DRAFT - Hardware Bill of Materials Finalized
 
 ## 1. Introduction: The First "Symbolon"
 
@@ -29,37 +29,48 @@ The Scout acts as a highly efficient "radio modem" for your phone. The phone's p
 The Sovereign is the aspirational, high-performance device for the dedicated core of our community. It is a true, stand-alone communication tool that requires no other device to function. It is also the first "Pneuma Seed Node."
 
 * **Philosophy:** Maximum sovereignty and a direct contribution to the Pneuma compute network.
-* **Approx. Cost:** $80 - $100+
-* **Core Hardware:** Radxa Zero 3W (or similar powerful SBC with an NPU) + a compatible LoRa radio HAT.
+* **Approx. Cost:** $120 - $145
 * **Core Software:** Base Linux OS (e.g., Armbian) + Meshtastic firmware + on-device AI models for STT/TTS.
 
-### Workflow (Sending):
+### Sovereign Build: Bill of Materials
 
-The Sovereign handles all processing on-device. The user speaks, the Radxa's NPU/CPU converts speech to text, and the LoRa HAT transmits the resulting packet.
+| Component | Item | Approx. Cost | Notes |
+| :--- | :--- | :--- | :--- |
+| **The Brain** | Radxa Zero 3W (4GB/32GB eMMC) | $50 - $75 | The target model. An Orange Pi Zero 3 is a viable alternative if this is unavailable. |
+| **The Radio** | Waveshare SX1262 LoRaWAN HAT (915 MHz) | $30 | Stacks directly on the Radxa's GPIO header. |
+| **The Display** | Waveshare 1.3inch OLED HAT | $15 | Stacks on top of the LoRa HAT. Has a joystick & 3 buttons for PTT/UI. |
+| **Power System** | **Seeed Studio Lipo Rider Plus** | $15 | **CRITICAL.** This is our all-in-one USB-C charger and **5V / 2.5A** booster. |
+| **The Battery** | 3000mAh Lithium Ion Polymer (LiPo) Battery | $11 | Must have a 2-pin JST-PH 2.0 connector to plug into the Lipo Rider. |
+| **The Antenna** | Standard 915 MHz SMA Antenna | Included | Comes with the LoRa HAT. |
+| **Misc** | 40-pin GPIO Stacking Header, Wires | $10 | For connecting the HATs and power. |
+
+### Sovereign Feature: Emergency Power Bank
+
+A core principle of The Lyceum is "radical resourcefulness." The Seeed Studio Lipo Rider Plus board includes a **USB-A output port**, allowing your Sovereign AIWT to function as an emergency 3000mAh power bank for charging a phone or other device.
+
+**Usage Caveat:** The Lipo Rider is rated for a **2.5A *total* output.**
+* **Safe Use:** Charge external devices when the AIWT is in standby/sleep mode.
+* **Risk:** Do not attempt to charge an external device while also running high-intensity tasks (like STT or compute Symbolons) on the Radxa. This combined load can exceed 2.5A and cause a system-wide brownout or shutdown.
 
 ## 4. Power Management & Message Reception: The "Two Brains" Architecture
 
-A critical challenge for a battery-powered device is receiving messages without draining the battery. A high-power application processor (like the Radxa) cannot listen for radio signals while in a deep sleep. The Sovereign AIWT solves this with a "two brains" architecture.
+A critical challenge for a battery-powered device is receiving messages without draining the battery. The Sovereign AIWT solves this with a "two brains" architecture.
 
-* **Brain #1: The Thinker (Radxa Zero 3W):** This is the powerful main processor. It runs the Linux OS and the AI models. To preserve power, it spends most of its time in a deep, low-power sleep state.
-* **Brain #2: The Listener (SX1262 LoRa Chip):** The chip on the LoRa HAT is a dedicated microcontroller in its own right. It runs simple firmware and sips microamps of power. **This brain never sleeps.**
+* **Brain #1: The Thinker (Radxa Zero 3W):** The powerful main processor. Spends most of its time in a deep, low-power sleep state.
+* **Brain #2: The Listener (SX1262 LoRa Chip):** The dedicated microcontroller on the LoRa HAT. It sips microamps of power and **never sleeps.**
 
 ### The "Digital Tripwire" Workflow (Receiving):
 
-1.  **The Vigil:** The Radxa (Thinker) puts itself to sleep. Before it does, it configures the SX1262 (Listener) to watch for incoming LoRa packets on our private channel.
-2.  **The Whisper:** A LoRa packet arrives. The always-on SX1262 detects it, verifies it's for our channel, and receives it into a small internal memory buffer.
-3.  **The Tripwire:** The SX1262 now wakes the main processor by sending a **hardware interrupt**—an electrical signal over a specific GPIO pin connecting the HAT to the Radxa.
+1.  **The Vigil:** The Radxa (Thinker) goes to sleep, but first tells the SX1262 (Listener) to watch for incoming messages.
+2.  **The Whisper:** A LoRa packet arrives. The always-on SX1262 verifies it and receives it into a small internal buffer.
+3.  **The Tripwire:** The SX1262 sends a **hardware interrupt** (an electrical signal) to the Radxa via a GPIO pin.
 4.  **The Awakening:** The interrupt instantly wakes the Radxa CPU from its sleep state.
-5.  **The Hand-Off:** The Radxa's software queries the LoRa HAT, which then transfers the message from its buffer to the Radxa's main memory.
-6.  **Action & Return to Sleep:** The Radxa is now fully awake. It processes the message (displays it, runs TTS). Once complete, its control script commands the OS to return to a deep sleep, and the cycle repeats.
-
-This co-processor model provides the power of a full computer when needed and the battery efficiency of a dedicated microcontroller during idle periods.
+5.  **The Hand-Off:** The Radxa queries the LoRa HAT and retrieves the message from its buffer.
+6.  **Action & Return to Sleep:** The Radxa processes the message (displays it, runs TTS), and then its control script commands the OS to return to sleep.
 
 ## 5. The Immediate Goal: The "Ping-Pong" Proof-of-Concept (PoC)
 
-Our first practical step is to build one of each device and demonstrate basic functionality.
-
-1.  **Build the Hardware:** Assemble one Scout and one Sovereign node.
+1.  **Build the Hardware:** Assemble one Scout and one Sovereign node using the parts lists.
 2.  **Establish Radio Link:** Flash both with base Meshtastic firmware and confirm they can exchange simple text messages.
 3.  **Implement the "Scout Send":** Fork the Meshtastic mobile client and implement the STT-to-text transmission loop.
 4.  **The Win Condition:** A user speaks into the Scout-paired phone. The Sovereign node receives the message as text. This proves the core concept is viable.
