@@ -1,7 +1,7 @@
 # The Lyceum: AIWT (AI Walkie-Talkie) Build Guide
 
-**Version:** 0.3 - October 21, 2025
-**Status:** DRAFT - Hardware Bill of Materials Finalized
+**Version:** 0.4 - October 21, 2025
+**Status:** DRAFT - Hardware & UI Concept
 
 ## 1. Introduction: The First "Symbolon"
 
@@ -20,10 +20,6 @@ The Scout is the low-cost, accessible entry point for every citizen of The Lyceu
 * **Core Hardware:** Heltec V4 (ESP32-S3) or similar Meshtastic-compatible board.
 * **Core Software:** Standard Meshtastic firmware + The Lyceum mobile client app (forked from the official Meshtastic client).
 
-### Workflow:
-
-The Scout acts as a highly efficient "radio modem" for your phone. The phone's processor handles all STT/TTS operations, and the Scout hardware manages the LoRa radio and Bluetooth connection.
-
 ## 3. Path B: The "Sovereign" AIWT (Self-Contained)
 
 The Sovereign is the aspirational, high-performance device for the dedicated core of our community. It is a true, stand-alone communication tool that requires no other device to function. It is also the first "Pneuma Seed Node."
@@ -38,7 +34,7 @@ The Sovereign is the aspirational, high-performance device for the dedicated cor
 | :--- | :--- | :--- | :--- |
 | **The Brain** | Radxa Zero 3W (4GB/32GB eMMC) | $50 - $75 | The target model. An Orange Pi Zero 3 is a viable alternative if this is unavailable. |
 | **The Radio** | Waveshare SX1262 LoRaWAN HAT (915 MHz) | $30 | Stacks directly on the Radxa's GPIO header. |
-| **The Display** | Waveshare 1.3inch OLED HAT | $15 | Stacks on top of the LoRa HAT. Has a joystick & 3 buttons for PTT/UI. |
+| **The Display** | Waveshare 1.3inch OLED HAT | $15 | Stacks on top of the LoRa HAT. Has a **5-way joystick & 3 side buttons**. |
 | **Power System** | **Seeed Studio Lipo Rider Plus** | $15 | **CRITICAL.** This is our all-in-one USB-C charger and **5V / 2.5A** booster. |
 | **The Battery** | 3000mAh Lithium Ion Polymer (LiPo) Battery | $11 | Must have a 2-pin JST-PH 2.0 connector to plug into the Lipo Rider. |
 | **The Antenna** | Standard 915 MHz SMA Antenna | Included | Comes with the LoRa HAT. |
@@ -46,11 +42,9 @@ The Sovereign is the aspirational, high-performance device for the dedicated cor
 
 ### Sovereign Feature: Emergency Power Bank
 
-A core principle of The Lyceum is "radical resourcefulness." The Seeed Studio Lipo Rider Plus board includes a **USB-A output port**, allowing your Sovereign AIWT to function as an emergency 3000mAh power bank for charging a phone or other device.
+The Seeed Studio Lipo Rider Plus board includes a **USB-A output port**, allowing your Sovereign AIWT to function as an emergency 3000mAh power bank for charging a phone or other device.
 
-**Usage Caveat:** The Lipo Rider is rated for a **2.5A *total* output.**
-* **Safe Use:** Charge external devices when the AIWT is in standby/sleep mode.
-* **Risk:** Do not attempt to charge an external device while also running high-intensity tasks (like STT or compute Symbolons) on the Radxa. This combined load can exceed 2.5A and cause a system-wide brownout or shutdown.
+**Usage Caveat:** The Lipo Rider is rated for a **2.5A *total* output.** Charge external devices when the AIWT is in standby. Do not attempt to charge a device while also running high-intensity tasks on the Radxa, as this can cause a system-wide brownout.
 
 ## 4. Power Management & Message Reception: The "Two Brains" Architecture
 
@@ -68,14 +62,39 @@ A critical challenge for a battery-powered device is receiving messages without 
 5.  **The Hand-Off:** The Radxa queries the LoRa HAT and retrieves the message from its buffer.
 6.  **Action & Return to Sleep:** The Radxa processes the message (displays it, runs TTS), and then its control script commands the OS to return to sleep.
 
-## 5. The Immediate Goal: The "Ping-Pong" Proof-of-Concept (PoC)
+## 5. Sovereign AIWT: Control & UI Concept (v1.0)
+
+The Waveshare OLED HAT provides a rich 8-button control scheme (a 5-way joystick and 3 side buttons). This transforms the device from a simple walkie-talkie into a full handheld communicator. The proposed v1.0 control map separates real-time actions (joystick) from system-level actions (side buttons).
+
+### Joystick (High-Frequency Actions)
+
+* **Center-Press:** **PTT (Push-to-Talk).** This is the primary "do the main thing" button.
+* **Up/Down:** **Contextual Scroll.**
+    * On "Live" Screen: Controls **Volume Up / Down.**
+    * In "Inbox" Screen: **Scrolls through saved messages.**
+* **Left/Right:** **Contextual Switch.**
+    * On "Live" Screen: **Switches Channel or Contact.**
+    * In Menu: Navigates menus.
+
+### Side Buttons (System-Level Actions)
+
+* **Button 1 (Top): Power / Main Menu.**
+    * *Short Press:* Opens the main settings menu (e.g., "View Node ID," "Set Channel," "Reboot").
+    * *Long Press (3 sec):* Initiates the safe **Shutdown / Power On** sequence.
+* **Button 2 (Middle): "Inbox / Replay."**
+    * *Short Press:* Toggles between the "Live" screen and the "Message Inbox."
+    * *In Inbox:* Acts as the **"Replay"** button for the selected message.
+* **Button 3 (Bottom): The "Pneuma Button."**
+    * *Short Press:* Activates STT for a direct query to the Pneuma federated AI (e.g., "Pneuma, what's the network status?").
+
+## 6. The Immediate Goal: The "Ping-Pong" Proof-of-Concept (PoC)
 
 1.  **Build the Hardware:** Assemble one Scout and one Sovereign node using the parts lists.
 2.  **Establish Radio Link:** Flash both with base Meshtastic firmware and confirm they can exchange simple text messages.
 3.  **Implement the "Scout Send":** Fork the Meshtastic mobile client and implement the STT-to-text transmission loop.
 4.  **The Win Condition:** A user speaks into the Scout-paired phone. The Sovereign node receives the message as text. This proves the core concept is viable.
 
-## 6. How to Contribute
+## 7. How to Contribute
 
 This is a living document. We are actively seeking developers and hardware hackers to help:
 * Fork the Meshtastic client and build the AIWT user interface.
