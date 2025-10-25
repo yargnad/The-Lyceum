@@ -1,7 +1,7 @@
 # The Lyceum: AIWT (AI Walkie-Talkie) Build Guide
 
-**Version:** 0.5 - October 21, 2025
-**Status:** DRAFT - Core TTS Engine Identified
+**Version:** 0.6 - October 21, 2025
+**Status:** DRAFT - Core NPU-Accelerated AI Stack Identified
 
 ## 1. Introduction: The First "Symbolon"
 
@@ -40,13 +40,15 @@ The Sovereign is the aspirational, high-performance device for the dedicated cor
 | **The Antenna** | Standard 915 MHz SMA Antenna | Included | Comes with the LoRa HAT. |
 | **Misc** | 40-pin GPIO Stacking Header, Wires | $10 | For connecting the HATs and power. |
 
-### Sovereign AI Software: The v0.1 Target
+### Sovereign AI Software: The NPU-Accelerated Stack (v1.0)
 
-A core challenge is running AI models efficiently on-device. This discovery is the key to the Sovereign build's performance and a perfect example of our "radical resourcefulness" doctrine.
+A core challenge is running AI models efficiently on-device. This full NPU-accelerated stack is the "secret sauce" of the Sovereign build, ensuring high performance and low battery consumption.
 
-* **Text-to-Speech (TTS):** We will use the **[`paroli`](https://github.com/marty1885/paroli) library.** This is a critical find, as it is a blazing-fast TTS engine **specifically optimized for the Rockchip NPU** in our Radxa hardware. It is extremely fast (generates speech 5x faster than real-time), has a tiny 35MB footprint, and leverages the NPU to ensure low CPU and battery usage.
+* **Speech-to-Text (STT):** We will use the **[`SenseVoiceSmall-RKNN2`](https://huggingface.co/happyme531/SenseVoiceSmall-RKNN2) model.** This is a lightweight, pre-compiled model **specifically optimized to run on the Rockchip (RKNN) NPU** in our Radxa hardware. This will handle the "hearing" part of our loop.
 
-* **Speech-to-Text (STT):** (Pending) A primary goal is to find an equivalent NPU-accelerated or highly-optimized ARM64 STT library (e.g., a small, quantized `whisper` model) to pair with `paroli`.
+* **Text-to-Speech (TTS):** We will use the **[`paroli`](https://github.com/marty1885/paroli) library.** This is a blazing-fast TTS engine, also **specifically optimized for the Rockchip NPU.** It is extremely fast (generates speech 5x faster than real-time), has a tiny 35MB footprint, and will handle the "speaking" part of our loop.
+
+This end-to-end NPU pipeline (SenseVoice -> `paroli`) is a massive technical win. It offloads all heavy AI tasks from the main CPU, which will dramatically improve system responsiveness and battery life.
 
 ## 4. Power Management & Message Reception: The "Two Brains" Architecture
 
@@ -85,13 +87,14 @@ The Waveshare OLED HAT provides a rich 8-button control scheme (a 5-way joystick
 1.  **Build the Hardware:** Assemble one Scout and one Sovereign node using the parts lists.
 2.  **Establish Radio Link:** Flash both with base Meshtastic firmware and confirm they can exchange simple text messages.
 3.  **Implement the "Scout Send":** Fork the Meshtastic mobile client and implement the STT-to-text transmission loop.
-4.  **The Win Condition:** A user speaks into the Scout-paired phone. The Sovereign node receives the message as text. This proves the core concept is viable.
+4.  **Implement the "Sovereign AI":** Install the `SenseVoice` and `paroli` models on the Sovereign node and write the main control script to tie them to the hardware.
+5.  **The Win Condition:** A user speaks into the Scout-paired phone. The Sovereign node receives the text, *converts it to speech, and plays it audibly.* This proves the entire end-to-end concept.
 
 ## 7. How to Contribute
 
 This is a living document. We are actively seeking developers and hardware hackers to help:
 * Fork the Meshtastic client and build the AIWT user interface.
-* **Research and benchmark lightweight, NPU-accelerated STT models (e.g., `whisper.cpp`, `rknn-whisper`) that can be paired with our chosen `paroli` TTS engine.**
+* **Help benchmark and implement the `SenseVoice` and `paroli` stack on the Radxa Zero 3W.**
 * Design and share 3D-printable enclosures for both build paths.
 
 Join us. Let's build the future of communication, together.
