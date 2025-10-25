@@ -1,7 +1,7 @@
 # The Lyceum: AIWT (AI Walkie-Talkie) Build Guide
 
-**Version:** 0.4 - October 21, 2025
-**Status:** DRAFT - Hardware & UI Concept
+**Version:** 0.5 - October 21, 2025
+**Status:** DRAFT - Core TTS Engine Identified
 
 ## 1. Introduction: The First "Symbolon"
 
@@ -26,13 +26,13 @@ The Sovereign is the aspirational, high-performance device for the dedicated cor
 
 * **Philosophy:** Maximum sovereignty and a direct contribution to the Pneuma compute network.
 * **Approx. Cost:** $120 - $145
-* **Core Software:** Base Linux OS (e.g., Armbian) + Meshtastic firmware + on-device AI models for STT/TTS.
+* **Core Software:** Base Linux OS (e.g., Armbian) + Meshtastic firmware + On-Device AI Symbolons.
 
 ### Sovereign Build: Bill of Materials
 
 | Component | Item | Approx. Cost | Notes |
 | :--- | :--- | :--- | :--- |
-| **The Brain** | Radxa Zero 3W (4GB/32GB eMMC) | $50 - $75 | The target model. An Orange Pi Zero 3 is a viable alternative if this is unavailable. |
+| **The Brain** | Radxa Zero 3W (4GB/32GB eMMC) | $50 - $75 | Rockchip RK3566 w/ NPU. An Orange Pi Zero 3 is a viable alternative. |
 | **The Radio** | Waveshare SX1262 LoRaWAN HAT (915 MHz) | $30 | Stacks directly on the Radxa's GPIO header. |
 | **The Display** | Waveshare 1.3inch OLED HAT | $15 | Stacks on top of the LoRa HAT. Has a **5-way joystick & 3 side buttons**. |
 | **Power System** | **Seeed Studio Lipo Rider Plus** | $15 | **CRITICAL.** This is our all-in-one USB-C charger and **5V / 2.5A** booster. |
@@ -40,15 +40,17 @@ The Sovereign is the aspirational, high-performance device for the dedicated cor
 | **The Antenna** | Standard 915 MHz SMA Antenna | Included | Comes with the LoRa HAT. |
 | **Misc** | 40-pin GPIO Stacking Header, Wires | $10 | For connecting the HATs and power. |
 
-### Sovereign Feature: Emergency Power Bank
+### Sovereign AI Software: The v0.1 Target
 
-The Seeed Studio Lipo Rider Plus board includes a **USB-A output port**, allowing your Sovereign AIWT to function as an emergency 3000mAh power bank for charging a phone or other device.
+A core challenge is running AI models efficiently on-device. This discovery is the key to the Sovereign build's performance and a perfect example of our "radical resourcefulness" doctrine.
 
-**Usage Caveat:** The Lipo Rider is rated for a **2.5A *total* output.** Charge external devices when the AIWT is in standby. Do not attempt to charge a device while also running high-intensity tasks on the Radxa, as this can cause a system-wide brownout.
+* **Text-to-Speech (TTS):** We will use the **[`paroli`](https://github.com/marty1885/paroli) library.** This is a critical find, as it is a blazing-fast TTS engine **specifically optimized for the Rockchip NPU** in our Radxa hardware. It is extremely fast (generates speech 5x faster than real-time), has a tiny 35MB footprint, and leverages the NPU to ensure low CPU and battery usage.
+
+* **Speech-to-Text (STT):** (Pending) A primary goal is to find an equivalent NPU-accelerated or highly-optimized ARM64 STT library (e.g., a small, quantized `whisper` model) to pair with `paroli`.
 
 ## 4. Power Management & Message Reception: The "Two Brains" Architecture
 
-A critical challenge for a battery-powered device is receiving messages without draining the battery. The Sovereign AIWT solves this with a "two brains" architecture.
+The Sovereign AIWT solves the battery life challenge with a "two brains" architecture.
 
 * **Brain #1: The Thinker (Radxa Zero 3W):** The powerful main processor. Spends most of its time in a deep, low-power sleep state.
 * **Brain #2: The Listener (SX1262 LoRa Chip):** The dedicated microcontroller on the LoRa HAT. It sips microamps of power and **never sleeps.**
@@ -64,28 +66,19 @@ A critical challenge for a battery-powered device is receiving messages without 
 
 ## 5. Sovereign AIWT: Control & UI Concept (v1.0)
 
-The Waveshare OLED HAT provides a rich 8-button control scheme (a 5-way joystick and 3 side buttons). This transforms the device from a simple walkie-talkie into a full handheld communicator. The proposed v1.0 control map separates real-time actions (joystick) from system-level actions (side buttons).
+The Waveshare OLED HAT provides a rich 8-button control scheme (a 5-way joystick and 3 side buttons). This transforms the device from a simple walkie-talkie into a full handheld communicator.
 
 ### Joystick (High-Frequency Actions)
 
-* **Center-Press:** **PTT (Push-to-Talk).** This is the primary "do the main thing" button.
-* **Up/Down:** **Contextual Scroll.**
-    * On "Live" Screen: Controls **Volume Up / Down.**
-    * In "Inbox" Screen: **Scrolls through saved messages.**
-* **Left/Right:** **Contextual Switch.**
-    * On "Live" Screen: **Switches Channel or Contact.**
-    * In Menu: Navigates menus.
+* **Center-Press:** **PTT (Push-to-Talk).**
+* **Up/Down:** **Contextual Scroll** (Volume Up/Down or Message Scroll).
+* **Left/Right:** **Contextual Switch** (Channel/Contact Switch or Menu Navigation).
 
 ### Side Buttons (System-Level Actions)
 
 * **Button 1 (Top): Power / Main Menu.**
-    * *Short Press:* Opens the main settings menu (e.g., "View Node ID," "Set Channel," "Reboot").
-    * *Long Press (3 sec):* Initiates the safe **Shutdown / Power On** sequence.
-* **Button 2 (Middle): "Inbox / Replay."**
-    * *Short Press:* Toggles between the "Live" screen and the "Message Inbox."
-    * *In Inbox:* Acts as the **"Replay"** button for the selected message.
-* **Button 3 (Bottom): The "Pneuma Button."**
-    * *Short Press:* Activates STT for a direct query to the Pneuma federated AI (e.g., "Pneuma, what's the network status?").
+* **Button 2 (Middle): "Inbox / Replay"** (Toggles message inbox, replays selected message).
+* **Button 3 (Bottom): The "Pneuma Button"** (Activates STT for a direct query to the Pneuma federated AI).
 
 ## 6. The Immediate Goal: The "Ping-Pong" Proof-of-Concept (PoC)
 
@@ -98,7 +91,7 @@ The Waveshare OLED HAT provides a rich 8-button control scheme (a 5-way joystick
 
 This is a living document. We are actively seeking developers and hardware hackers to help:
 * Fork the Meshtastic client and build the AIWT user interface.
-* Research and benchmark lightweight, open-source STT/TTS models for the Sovereign build.
+* **Research and benchmark lightweight, NPU-accelerated STT models (e.g., `whisper.cpp`, `rknn-whisper`) that can be paired with our chosen `paroli` TTS engine.**
 * Design and share 3D-printable enclosures for both build paths.
 
 Join us. Let's build the future of communication, together.
