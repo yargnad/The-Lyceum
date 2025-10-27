@@ -23,6 +23,13 @@ The Lyceum is not a single network, but a hybrid of three distinct, symbiotic la
 ## 4. The Gateway Application: The AI-Enhanced Walkie-Talkie
 
 To bootstrap the network, we must provide immediate, tangible utility. The "AI-Enhanced Walkie-Talkie" enables voice communication over the LoRa mesh by converting speech to text for transmission and back to speech upon receipt. This provides a compelling reason for anyone to join and organically grow the network's physical footprint, with two primary build paths: the low-cost, phone-reliant "Scout" and the powerful, self-contained "Sovereign."
+### 🔧 Technical Specifications
+
+#### AI-Enhanced Walkie-Talkie
+- **STT (Speech-to-Text)**: [Paroli](https://github.com/paroli-ai/paroli)
+  - **Why Paroli?**: Optimized for low-power devices, supports offline operation, and integrates seamlessly with LoRa mesh.
+- **TTS (Text-to-Speech)**: [SenseVoiceSmall-RKNN2](https://github.com/sense-voice/sense-voice)
+  - **Why SenseVoiceSmall?**: Lightweight, efficient, and designed for embedded systems like the Radxa Zero 3W.
 
 ## 5. The Spirit of the Network: Pneuma [Πνεῦμα]
 
