@@ -1,7 +1,7 @@
 # The Lyceum Tokenomics: A "Proof-of-Utility" Model
 
-**Version:** 1.1 - October 21, 2025
-**Status:** DRAFT - Foundational Principles
+**Version:** 1.2 - October 21, 2025
+**Status:** DRAFT - Critical Update: Layer 3 Architecture
 
 ## 1. Our Guiding Principle: "People Over Tokens"
 
@@ -15,11 +15,7 @@ This is the foundational, non-negotiable principle of The Lyceum's economy. The 
 
 ## 2. The "Anti-Blockchain" Architecture
 
-The Lyceum is a "Proof-of-Utility" network, not a "Proof-of-Work" or "Proof-of-Stake" blockchain.
-
-We are philosophically opposed to "Proof-of-Work" (mining), as it is the literal opposite of our "radical resourcefulness" doctrine. We do not build a system by *wasting* compute power on useless math puzzles.
-
-Therefore, The Lyceum **does not run a resource-heavy blockchain.** Instead, we run a **Lightweight Encrypted Ledger** called the "Pneuma Vault." This is a simple, replicated, and cryptographically secured database that is managed by the network's high-reputation Guardian and Genesis nodes.
+The Lyceum is a "Proof-of-Utility" network, not a "Proof-of-Work" or "Proof-of-Stake" blockchain. We run a **Lightweight Encrypted Ledger** called the "Pneuma Vault," which is a simple, replicated database that tracks earned tokens.
 
 ## 3. The "Proof-of-Utility" Earning Model
 
@@ -30,14 +26,11 @@ The workflow is as follows:
 1.  **Job Submitted:** A user requests a Pneuma task.
 2.  **Real Work Performed:** Pneuma routes the job to a Guardian node. That node's **NPU/GPU/CPU (the "Artillery")** performs the actual, valuable compute work.
 3.  **Work Verified:** The job result is verified by the user's node or a nearby peer Guardian.
-4.  **Ledger Updated:** Upon verification, the "Pneuma Vault" is notified. The Vault, running as a low-priority CPU task, simply makes a database entry: `Node !a1b2c3d4 credited 0.1 tokens for Task #5879.`
+4.  **Ledger Updated:** Upon verification, the "Pneuma Vault" is notified and makes a simple database entry: `Node !a1b2c3d4 credited 0.1 tokens for Task #5879.`
 
 ## 4. Why We Don't Use the NPU for Tokenization
 
-An NPU is a specialized piece of hardware, our "Artillery." We **never** waste our artillery on simple bookkeeping.
-
-* **Pneuma & Symbolons (The Priority):** The network's high-performance NPUs, TPUs, and GPUs are reserved *exclusively* for their intended purpose—running the AI models and applications that provide real utility.
-* **Token Ledger (The Bookkeeping):** The Pneuma Vault is a simple, lightweight database. This is a trivial task for the main CPU and requires no specialized hardware.
+An NPU is a specialized piece of hardware, our "Artillery." We **never** waste our artillery on simple bookkeeping. The Pneuma Vault is a lightweight CPU task.
 
 ## 5. The Role and Lifecycle of a Token
 
@@ -45,11 +38,9 @@ An NPU is a specialized piece of hardware, our "Artillery." We **never** waste o
 
 Users earn tokens by contributing verifiable resources. This is stratified by the value of the work.
 
-* **Compute ("Reflex" Jobs):** Earning a standard rate of tokens for providing "autonomic" network services. This includes:
-    * Running low-power, specialist models (like `SenseVoice` or `paroli`).
-    * Running "Pneuma Guardian" vetting and reputation Symbolons.
-* **Compute ("Cortex" Jobs):** Earning a **premium rate** of tokens for contributing high-power hardware (powerful NPUs, GPUs) to the "fractured" federated LLM. Hosting a "Federated Expert Symbolon" (like one of Mistral's experts) is the highest-value compute task a node can perform.
-* **Relaying & Storage:** Earning tokens for providing high-uptime Layer 3 (MURS) backbone relays or hosting popular "Symbolon" apps for the Agora.
+* **Compute ("Reflex" Jobs):** Earning a standard rate of tokens for providing "autonomic" network services (running `SenseVoice`, `paroli`, or vetting Symbolons).
+* **Compute ("Cortex" Jobs):** Earning a **premium rate** of tokens for contributing high-power hardware to the "fractured" federated LLM.
+* **Relaying & Storage:** Earning tokens for providing verifiable, high-uptime **Layer 3 Backbone Relays** (via **900 MHz LoRa PTP** or **5 GHz Wi-Fi PTP**) or for hosting popular "Symbolon" apps for the Agora.
 
 ### Spending (Utility Access & Spam Prevention)
 
