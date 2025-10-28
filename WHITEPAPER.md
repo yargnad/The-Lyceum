@@ -1,6 +1,6 @@
 # The Lyceum: A Whitepaper for a Decentralized Future
 
-**Author:** Dan, The Authentic Rebellion
+**Author:** Dan Gray, The Authentic Rebellion
 **Version:** 1.3 - October 21, 2025
 **Status:** Public Release for Prior Art
 
