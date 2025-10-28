@@ -1,6 +1,6 @@
 # The Lyceum Tokenomics: A "Proof-of-Utility" Model
 
-**Version:** 1.0 - October 21, 2025
+**Version:** 1.1 - October 21, 2025
 **Status:** DRAFT - Foundational Principles
 
 ## 1. Our Guiding Principle: "People Over Tokens"
@@ -27,31 +27,36 @@ Tokens are not "mined." They are **earned** as a direct receipt for providing ve
 
 The workflow is as follows:
 
-1.  **Job Submitted:** A user requests a Pneuma task (e.g., an STT job for their AIWT).
+1.  **Job Submitted:** A user requests a Pneuma task.
 2.  **Real Work Performed:** Pneuma routes the job to a Guardian node. That node's **NPU/GPU/CPU (the "Artillery")** performs the actual, valuable compute work.
 3.  **Work Verified:** The job result is verified by the user's node or a nearby peer Guardian.
 4.  **Ledger Updated:** Upon verification, the "Pneuma Vault" is notified. The Vault, running as a low-priority CPU task, simply makes a database entry: `Node !a1b2c3d4 credited 0.1 tokens for Task #5879.`
-
-The tokenization is a **negligible-cost database write** that happens *after* the valuable compute work is finished.
 
 ## 4. Why We Don't Use the NPU for Tokenization
 
 An NPU is a specialized piece of hardware, our "Artillery." We **never** waste our artillery on simple bookkeeping.
 
-* **Pneuma & Symbolons (The Priority):** The network's high-performance NPUs, TPUs, and GPUs are reserved *exclusively* for their intended purpose—running the AI models and applications that provide real utility to the people.
+* **Pneuma & Symbolons (The Priority):** The network's high-performance NPUs, TPUs, and GPUs are reserved *exclusively* for their intended purpose—running the AI models and applications that provide real utility.
 * **Token Ledger (The Bookkeeping):** The Pneuma Vault is a simple, lightweight database. This is a trivial task for the main CPU and requires no specialized hardware.
-
-This architecture ensures that the network's resources are always prioritized for *utility*, not for the overhead of the token system itself.
 
 ## 5. The Role and Lifecycle of a Token
 
-* **Earning (Incentive):** Users earn tokens by contributing verifiable resources:
-    * **Compute:** Providing NPU/GPU/CPU cycles to the Pneuma AI.
-    * **Relaying:** Providing high-uptime bandwidth on the Layer 3 (MURS) backbone.
-    * **Storage:** Hosting popular "Symbolon" apps for the Agora.
-* **Spending (Utility Access & Spam Prevention):**
-    * Accessing high-value, network-wide compute resources (like the Pneuma LLM or a powerful GPU-based Symbolon) will cost a tiny, fixed amount of tokens. This creates a functional, circular economy and prevents spam.
-    * This directly reinforces the "Homestead Principle": using your *own* nodes is always free.
-* **Staking (Policing & Trust):**
-    * To offer a new "Symbolon" to the Agora, a developer with no reputation must "stake" a bond of tokens. If their app is found to be malicious by the Pneuma Guardians, their stake is "slashed" (burned or redistributed).
-    * This creates a powerful economic disincentive for bad actors and aligns developer incentives with the health of the commons.
+### Earning (Incentive)
+
+Users earn tokens by contributing verifiable resources. This is stratified by the value of the work.
+
+* **Compute ("Reflex" Jobs):** Earning a standard rate of tokens for providing "autonomic" network services. This includes:
+    * Running low-power, specialist models (like `SenseVoice` or `paroli`).
+    * Running "Pneuma Guardian" vetting and reputation Symbolons.
+* **Compute ("Cortex" Jobs):** Earning a **premium rate** of tokens for contributing high-power hardware (powerful NPUs, GPUs) to the "fractured" federated LLM. Hosting a "Federated Expert Symbolon" (like one of Mistral's experts) is the highest-value compute task a node can perform.
+* **Relaying & Storage:** Earning tokens for providing high-uptime Layer 3 (MURS) backbone relays or hosting popular "Symbolon" apps for the Agora.
+
+### Spending (Utility Access & Spam Prevention)
+
+* Accessing high-value, network-wide "Cortex" compute resources (like the Pneuma LLM) will cost a tiny, fixed amount of tokens. This creates a functional, circular economy and prevents spam.
+* This directly reinforces the "Homestead Principle": using your *own* nodes is always free.
+
+### Staking (Policing & Trust)
+
+* To offer a new "Symbolon" to the Agora, a developer with no reputation must "stake" a bond of tokens. If their app is found to be malicious by the Pneuma Guardians, their stake is "slashed" (burned or redistributed).
+* This creates a powerful economic disincentive for bad actors and aligns developer incentives with the health of the commons.
