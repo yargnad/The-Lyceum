@@ -45,6 +45,10 @@ The best way to join is to build our foundational app. See the `AIWT_BUILD_GUIDE
 * **Hardware Hackers:** Design and share 3D-printable enclosures and high-gain antennas for our L1 devices and L3 backbone links.
 * **Everyone:** Buy or repurpose a node! The single most important contribution is expanding the physical network.
 
+**Related Projects:**
+- **The Crystalizer (Interlude)**: [github.com/yargnad/The-Crystalizer](https://github.com/yargnad/The-Crystalizer) - Save AI conversations when platforms fail you
+- **Complete Framework**: [rebellion.musubiaccord.org](https://rebellion.musubiaccord.org)
+
 ## 7. License
 
 This project is licensed under the **GNU General Public License v3.0**. This ensures that The Lyceum and any derivative works will always remain free and open source. See the `LICENSE` file for the full text.
