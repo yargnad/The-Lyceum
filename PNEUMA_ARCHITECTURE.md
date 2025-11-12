@@ -1,6 +1,6 @@
 # Pneuma Architecture: The Federated Mind
 
-**Version:** 1.3
+**Version:** 1.4
 **Status:** Architectural Doctrine
 
 ## 1. The Core Concept: "The Fractured Mind"
@@ -29,7 +29,7 @@ Pneuma operates on distinct physiological levels, mirroring the human nervous sy
 * **The Stack:** A "Dual-Brain" architecture.
     * **Real-Time Brain (STM32 MCU):** Monitors environmental sensors (air, radiation, spectrum) with microsecond precision.
     * **Linux Brain (Qualcomm NPU):** Runs quantized analysis models (Qualcomm SNPE) to filter noise and detect anomalies locally.
-* **Behavior:** These nodes act as the network's "senses," processing raw physical data into meaningful alerts before broadcasting to the Cortex.
+* **Telemetry Optimization:** Sensor alerts are serialized using lightweight formats (e.g., Protocol Buffers or CBOR) to fit multiple readings into a single LoRa packet (~50-100 bytes).
 
 ### Level 2: The Cortex (Federated & Deep)
 * **Role:** Handling complex reasoning, generation, coding, and analysis ("Deep Thought").
@@ -44,32 +44,47 @@ When a user pushes the "Pneuma Button" on their AIWT and asks a complex question
 ### Stage A: The Local Moderator (The User's Node)
 Every user's primary node (e.g., their Genesis Node or Sovereign AIWT) acts as the **Moderator**.
 * **Sovereignty:** The user's own hardware is always the boss. It creates the prompt and makes the final decision on the answer.
-* **Routing:** The Moderator's lightweight "Gating Network" analyzes the prompt (e.g., "Write a Python script...") and tags it with structured metadata: `{"intent": "code", "confidence": 0.9}`.
+* **Routing:** The Moderator's lightweight "Gating Network" analyzes the prompt and tags it with structured metadata, including optional user constraints:
+    ```json
+    {
+      "intent": "code",
+      "confidence": 0.9,
+      "constraints": {
+        "max_latency_ms": 2000,
+        "prefer_local": true
+      }
+    }
+    ```
 
 ### Stage B: The Expert Call (Two-Phase Routing)
 To minimize latency and bandwidth usage, the Moderator uses a "Two-Phase Discovery" protocol:
 1.  **Phase 1 (Local):** Queries the local **Layer 2 (Wi-Fi HaLow)** mesh for any Guardians hosting the required skill. Ideally, this stays within the neighborhood (<50ms latency).
 2.  **Phase 2 (Backbone):** Only if no local expert is found, the request escalates to the **Layer 3 (LoRa/Wi-Fi PTP)** backbone to find a remote Guardian.
+* **Observability:** The Moderator exposes phase latency metrics to the user (e.g., "Answered locally in 42ms" vs. "Routed to backbone in 1.2s"), helping users identify local skill gaps.
 
 ### Stage C: The Agent Debate (Execution)
 Instead of passing heavy model weights, the nodes exchange lightweight text.
 1.  **Proposal:** The `[Code]` expert generates the Python script.
 2.  **Critique:** The `[Security]` expert reviews the script for vulnerabilities.
 3.  **Revision:** The `[Code]` expert updates the script based on the critique.
-* **Bandwidth Efficiency:** This entire "debate" happens via small text packets (~1KB total), making it viable even over our Layer 3 LoRa links if necessary.
+* **Debate Controls:**
+    * **Round Limit:** Capped at **2 critique rounds** to bound latency.
+    * **Timeout:** **30-second hard limit** per expert response. If an expert times out, the moderator proceeds with available data.
+* **Bandwidth Efficiency:** This entire "debate" happens via small text packets (~1KB total), making it viable even over our Layer 3 LoRa links.
 
 ### Stage D: The Synthesis (Fusion)
-The results are sent back to the user's Local Moderator.
-* The Moderator fuses the outputs, verifies the consensus, and streams the final result to the user's AIWT screen or TTS engine.
-* **Privacy:** The raw reasoning process happens on the private mesh. No data is ever sent to a corporate cloud.
+The results are sent back to the user's Local Moderator for final fusion.
+* **Weighted Voting:** Responses are weighted by the Guardian's reputation score and confidence.
+* **Evidence-Based:** Conflicting responses are resolved by preferring those with verifiable citations or test results.
+* **Streaming with Backfill:** The highest-confidence response streams immediately to the user. If a late-arriving expert provides a significantly better answer, the user receives a "Revised Answer" notification.
 
 ### 3.1 The "Lightweight Moderator" Profile (For AIWT Nodes)
 
-A core challenge is allowing low-power nodes (like the Sovereign AIWT with 4GB RAM) to manage this process. We utilize a "Project Manager" architecture where the AIWT manages the work without doing the heavy lifting.
+A core challenge is allowing low-power nodes (like the Sovereign AIWT with 4GB RAM) to manage this process. We utilize a "Project Manager" architecture.
 
-* **The Tiny Router (NPU):** Instead of a massive LLM for routing, the AIWT runs a tiny, specialized classification model (e.g., TinyBERT or quantized Qwen-0.5B) on its NPU (<300MB footprint). It outputs routing tags instantly.
-* **The Editor (NPU):** For synthesis, the AIWT uses a small, specialized summarization model (e.g., `Phi-3-mini` quantized) to smooth the returned text responses into a coherent answer.
-* **The Curator (Logic Fallback):** In ultra-low-power modes, the AIWT bypasses neural synthesis entirely and uses logic-based selection (e.g., displaying the answer with the highest network confidence score).
+* **The Tiny Router (NPU):** Instead of a massive LLM, the AIWT runs a tiny, specialized classification model (e.g., TinyBERT or quantized Qwen-0.5B) on its NPU (<300MB footprint).
+* **The Editor (NPU):** For synthesis, the AIWT uses a small, specialized summarization model (e.g., `Phi-3-mini` quantized) to smooth responses.
+* **The Curator (Logic Fallback):** In ultra-low-power modes, the AIWT bypasses neural synthesis and uses logic-based selection (displaying the answer with the highest network confidence score).
 
 ## 4. Implementation Strategy: "Petals" vs. "Agents"
 
@@ -78,16 +93,18 @@ To manage bandwidth physics, we use two different transport methods:
 * **Method 1: Agent-Level (Inter-Node / WAN)**
     * **Used For:** Communication between houses, neighborhoods, or across the Backbone.
     * **Data:** Pure Text.
-    * **Why:** Avoids the "all-to-all" communication bottleneck that cripples standard distributed AI over slower links.
-
 * **Method 2: Petals-Style (Intra-Cluster / LAN)**
     * **Used For:** Splitting a massive model across multiple devices *within the same house* (e.g., splitting a 70B model across The Whetstone and three laptops).
     * **Data:** Tensor Activations (Heavier).
-    * **Why:** High-speed local LAN allows for splitting the "layers" of a model for maximum horsepower.
 
-## 5. Resilience and Privacy
+## 5. Resilience and Reputation
 
-* **Skill Taxonomy:** The network maintains a shared, versioned ontology of skills (e.g., `[Code]`, `[Medical]`, `[Math]`) to ensure consistent routing.
-* **Dynamic Reputation:** Guardians are periodically benchmarked on their claimed skills. The Pneuma Vault maintains a reputation score for each node, ensuring high-quality experts are prioritized.
-* **No Single Point of Failure:** If the neighbor's `[Code]` node goes offline, the Gating Network simply routes the request to the next nearest Guardian with that skill.
-* **Cached States:** To handle network jitter, intermediate states of the "thought" are cached locally. If a link drops, the thought can resume via a different path.
+* **Skill Taxonomy & Benchmarks:** The network maintains a versioned ontology of skills. Guardians must pass automated benchmark suites (available in the `/benchmarks` repo directory) to claim a skill (e.g., passing unit tests for `[Code]`).
+* **Dynamic Reputation:** The Pneuma Vault tracks success rates. High-reputation nodes are prioritized during routing.
+* **Cached States:** Intermediate debate states are cached locally by the Moderator using an **LRU policy (10-minute TTL)** and are **encrypted at rest**. This allows resuming a thought if a link drops.
+
+## 6. Security and Privacy
+
+* **Query Privacy:**
+    * **Moderator-Side Encryption:** Queries are encrypted end-to-end between the user's Moderator and the selected Guardian using mesh-wide shared keys or per-session ephemeral keys. Layer 3 operators cannot read the traffic.
+    * **Minimal Disclosure:** Guardians initially see only skill tags (e.g., `[Code]`). They do not receive the full prompt until they acknowledge participation, preventing passive eavesdropping.
