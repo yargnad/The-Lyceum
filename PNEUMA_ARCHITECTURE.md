@@ -1,6 +1,6 @@
 # Pneuma Architecture: The Federated Mind
 
-**Version:** 1.0
+**Version:** 1.1
 **Status:** Architectural Doctrine
 
 ## 1. The Core Concept: "The Fractured Mind"
@@ -54,6 +54,14 @@ Instead of passing heavy model weights, the nodes exchange lightweight text.
 The results are sent back to the user's Local Moderator.
 * The Moderator fuses the outputs, verifies the consensus, and streams the final result to the user's AIWT screen or TTS engine.
 * **Privacy:** The raw reasoning process happens on the private mesh. No data is ever sent to a corporate cloud.
+
+### 3.1 The "Lightweight Moderator" Profile (For AIWT Nodes)
+
+A core challenge is allowing low-power nodes (like the Sovereign AIWT with 4GB RAM) to manage this process. We utilize a "Project Manager" architecture where the AIWT manages the work without doing the heavy lifting.
+
+* **The Tiny Router (NPU):** Instead of a massive LLM for routing, the AIWT runs a tiny, specialized classification model (e.g., TinyBERT or quantized Qwen-0.5B) on its NPU (<300MB footprint). It outputs routing tags (e.g., `[Expert: History]`) instantly.
+* **The Editor (NPU):** For synthesis, the AIWT uses a small, specialized summarization model (e.g., `Phi-3-mini` quantized) to smooth the returned text responses into a coherent answer.
+* **The Curator (Logic Fallback):** In ultra-low-power modes, the AIWT bypasses neural synthesis entirely and uses logic-based selection (e.g., displaying the answer with the highest network confidence score).
 
 ## 4. Implementation Strategy: "Petals" vs. "Agents"
 
