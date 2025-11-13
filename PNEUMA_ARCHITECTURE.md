@@ -1,7 +1,7 @@
 # Pneuma Architecture: The Federated Mind
 
-**Version:** 1.5
-**Status:** Architectural Doctrine - Qwen 2.5 Integration
+**Version:** 1.8
+**Status:** Architectural Doctrine (Production-Ready)
 
 ## 1. The Core Concept: "The Fractured Mind"
 
@@ -30,7 +30,7 @@ Pneuma operates on distinct physiological levels, mirroring the human nervous sy
 * **The Stack:** A "Dual-Brain" architecture.
     * **Real-Time Brain (STM32 MCU):** Monitors environmental sensors (air, radiation, spectrum) with microsecond precision.
     * **Linux Brain (Qualcomm NPU):** Runs **Qwen 2.5 0.5B (Quantized)** for on-device anomaly detection and sensor reasoning.
-* **Telemetry Optimization:** Sensor alerts are serialized using lightweight formats (e.g., Protocol Buffers or CBOR) to fit multiple readings into a single LoRa packet (~50-100 bytes).
+* **Telemetry Optimization:** Sensor alerts are serialized using lightweight formats (e.g., **Protocol Buffers or CBOR**) to fit multiple readings into a single LoRa packet (~50-100 bytes).
 
 ### Level 2: The Cortex (Federated & Deep)
 * **Role:** Handling complex reasoning, generation, coding, and analysis ("Deep Thought").
@@ -45,7 +45,7 @@ When a user pushes the "Pneuma Button" on their AIWT and asks a complex question
 ### Stage A: The Local Moderator (The User's Node)
 Every user's primary node (e.g., their Genesis Node or Sovereign AIWT) acts as the **Moderator**.
 * **Sovereignty:** The user's own hardware is always the boss. It creates the prompt and makes the final decision on the answer.
-* **Routing:** The Moderator's lightweight "Gating Network" analyzes the prompt and tags it with structured metadata, including optional user constraints:
+* **Routing:** The Moderator's lightweight "Gating Network" analyzes the prompt and tags it with structured metadata, including optional user constraints for power users:
     ```json
     {
       "intent": "code",
@@ -79,39 +79,35 @@ The results are sent back to the user's Local Moderator for final fusion.
 * **Evidence-Based:** Conflicting responses are resolved by preferring those with verifiable citations or test results.
 * **Streaming with Backfill:** The highest-confidence response streams immediately to the user. If a late-arriving expert provides a significantly better answer, the user receives a "Revised Answer" notification.
 
-## 4. The Model Stratigraphy: Qwen 2.5 Integration
-
-We have standardized on the **Qwen 2.5** family of open-weights models. This provides a unified, high-performance ecosystem with specialized variants for every tier of hardware.
-
-| Node Role | Hardware Example | Recommended Model | Primary Function |
-| :--- | :--- | :--- | :--- |
-| **AIWT Moderator** | Radxa Zero 3W (4GB RAM) | **Qwen 2.5 3B (Quantized)** | Lightweight Routing & Synthesis |
-| **Hybrid Guardian** | Arduino UNO Q (2GB RAM) | **Qwen 2.5 0.5B (Quantized)** | Sensor Anomaly Detection |
-| **General Guardian** | Old Laptop / SBC (8GB+ RAM) | **Qwen 2.5 7B** | General Knowledge Expert |
-| **Skill Guardian** | SBC / PC (16GB+ RAM) | **Qwen 2.5 Coder/Math 14B** | `[Code]` or `[Math]` Specialist |
-| **Genesis Node** | Rock 5B+ / High-End PC | **Qwen 2.5 72B** (or **Mixtral 8x7B**) | Flagship `[Research]` / Batch Processing |
-
-* **Why Qwen 2.5?** It offers superior performance at small sizes (0.5B, 3B, 7B), excellent multilingual support (29 languages), and specialized variants (Coder, Math) that perfectly fit our "Expert Symbolon" architecture. It is fully open-source (Apache 2.0) and privacy-respecting.
-
-## 5. Implementation Strategy: "Petals" vs. "Agents"
+## 4. Implementation Strategy: "Petals" vs. "Agents"
 
 To manage bandwidth physics, we use two different transport methods:
 
-* **Method 1: Agent-Level (Inter-Node / WAN)**
-    * **Used For:** Communication between houses, neighborhoods, or across the Backbone.
-    * **Data:** Pure Text.
-* **Method 2: Petals-Style (Intra-Cluster / LAN)**
-    * **Used For:** Splitting a massive model across multiple devices *within the same house* (e.g., splitting a 70B model across The Whetstone and three laptops).
-    * **Data:** Tensor Activations (Heavier).
+* **Method 1: Agent-Level (Inter-Node / WAN):** Used for text-based debate between Guardians across the mesh (houses, neighborhoods).
+* **Method 2: Petals-Style (Intra-Cluster / LAN):** Used for splitting a single, massive model (e.g., 70B) across multiple high-speed, co-located nodes (e.g., within the same house on a gigabit LAN) by passing tensor activations.
+    * **Fault Tolerance:** Petals-Style deployments cache intermediate activations; if a node drops mid-inference, the remaining nodes resume from the last cached layer output.
+* **Hybrid Mode:** A single query can use both. A Moderator can request a `[Code]` expert that is a *Petals-Style cluster* (running a 70B model) and have it "debate" a `[Security]` expert that is a single *Agent-Level* node.
 
-## 6. Resilience and Reputation
+## 5. Resilience and Reputation
 
 * **Skill Taxonomy & Benchmarks:** The network maintains a versioned ontology of skills. Guardians must pass automated benchmark suites (available in the `/benchmarks` repo directory) to claim a skill (e.g., passing unit tests for `[Code]`).
 * **Dynamic Reputation:** The Pneuma Vault tracks success rates. High-reputation nodes are prioritized during routing.
-* **Cached States:** Intermediate debate states are cached locally by the Moderator using an **LRU policy (10-minute TTL)** and are **encrypted at rest**. This allows resuming a thought if a link drops.
+* **Cached States:** Intermediate debate states are cached locally by the **Moderator only** and are **never shared**, preserving query privacy.
+    * **Cache Policy:** Uses an LRU (Least Recently Used) policy with a **10-minute TTL** for incomplete/failed queries.
+    * **Cache Eviction:** Successful queries are **purged immediately** post-synthesis to minimize storage of sensitive data.
+    * **Security:** All cached states are **encrypted at rest**.
 
-## 7. Security and Privacy
+## 6. Security and Privacy
 
+* **Key Rotation Policy:** Mesh-wide shared keys will rotate on a fixed schedule (e.g., every 30 days). Ephemeral session keys will be generated per-query and discarded post-synthesis to prevent correlation.
 * **Query Privacy:**
-    * **Moderator-Side Encryption:** Queries are encrypted end-to-end between the user's Moderator and the selected Guardian using mesh-wide shared keys or per-session ephemeral keys. Layer 3 operators cannot read the traffic.
+    * **Moderator-Side Encryption:** Queries are encrypted end-to-end between the user's Moderator and the selected Guardian. Layer 3 backbone operators cannot read the traffic.
     * **Minimal Disclosure:** Guardians initially see only skill tags (e.g., `[Code]`). They do not receive the full prompt until they acknowledge participation, preventing passive eavesdropping.
+
+## 7. Next Steps: Companion Documents
+
+This architecture document will be supported by a set of detailed implementation specifications:
+* **`PNEUMA_PROTOCOL.md`:** Will define the wire protocols, JSON message schemas, and encryption handshake logic.
+* **`SYMBOLON_API.md`:** Will define the API for third-party developers to create, register, and benchmark new Expert Symbolons.
+* **`PROOF_OF_UTILITY.md`:** Will provide the full specification for the "Pneuma Vault," including the token credit formula and reputation scoring algorithm.
+* **`DEPLOYMENT_GUIDE.md`:** Will be a practical playbook for setting up hardware, flashing images, and planning network topology.
