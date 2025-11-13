@@ -1,7 +1,7 @@
 # The Lyceum: AIWT (AI Walkie-Talkie) Build Guide
 
-**Version:** 0.6 - October 21, 2025
-**Status:** DRAFT - Core NPU-Accelerated AI Stack Identified
+**Version:** 0.7 - October 21, 2025
+**Status:** DRAFT - Qwen 2.5 Integration
 
 ## 1. Introduction: The First "Symbolon"
 
@@ -40,7 +40,7 @@ The Sovereign is the aspirational, high-performance device for the dedicated cor
 | **The Antenna** | Standard 915 MHz SMA Antenna | Included | Comes with the LoRa HAT. |
 | **Misc** | 40-pin GPIO Stacking Header, Wires | $10 | For connecting the HATs and power. |
 
-### Sovereign AI Software: The NPU-Accelerated Stack (v1.0)
+### Sovereign AI Software: The NPU-Accelerated Stack (v1.1)
 
 A core challenge is running AI models efficiently on-device. This full NPU-accelerated stack is the "secret sauce" of the Sovereign build, ensuring high performance and low battery consumption.
 
@@ -48,7 +48,9 @@ A core challenge is running AI models efficiently on-device. This full NPU-accel
 
 * **Text-to-Speech (TTS):** We will use the **[`paroli`](https://github.com/marty1885/paroli) library.** This is a blazing-fast TTS engine, also **specifically optimized for the Rockchip NPU.** It is extremely fast (generates speech 5x faster than real-time), has a tiny 35MB footprint, and will handle the "speaking" part of our loop.
 
-This end-to-end NPU pipeline (SenseVoice -> `paroli`) is a massive technical win. It offloads all heavy AI tasks from the main CPU, which will dramatically improve system responsiveness and battery life.
+* **Routing & Logic (The Moderator):** We will use **Qwen 2.5 3B (Quantized)**. This model fits comfortably within the Radxa's RAM and is powerful enough to act as the local "Router" for the Pneuma network, analyzing user prompts and dispatching them to expert nodes.
+
+This end-to-end NPU pipeline (SenseVoice -> Qwen -> paroli) is a massive technical win. It offloads all heavy AI tasks from the main CPU, which will dramatically improve system responsiveness and battery life.
 
 ## 4. Power Management & Message Reception: The "Two Brains" Architecture
 
@@ -87,7 +89,7 @@ The Waveshare OLED HAT provides a rich 8-button control scheme (a 5-way joystick
 1.  **Build the Hardware:** Assemble one Scout and one Sovereign node using the parts lists.
 2.  **Establish Radio Link:** Flash both with base Meshtastic firmware and confirm they can exchange simple text messages.
 3.  **Implement the "Scout Send":** Fork the Meshtastic mobile client and implement the STT-to-text transmission loop.
-4.  **Implement the "Sovereign AI":** Install the `SenseVoice` and `paroli` models on the Sovereign node and write the main control script to tie them to the hardware.
+4.  **Implement the "Sovereign AI":** Install the `SenseVoice`, `Qwen 2.5`, and `paroli` models on the Sovereign node and write the main control script to tie them to the hardware.
 5.  **The Win Condition:** A user speaks into the Scout-paired phone. The Sovereign node receives the text, *converts it to speech, and plays it audibly.* This proves the entire end-to-end concept.
 
 ## 7. How to Contribute
