@@ -1,7 +1,7 @@
 # Pneuma Architecture: The Federated Mind
 
-**Version:** 1.4
-**Status:** Architectural Doctrine
+**Version:** 1.5
+**Status:** Architectural Doctrine - Qwen 2.5 Integration
 
 ## 1. The Core Concept: "The Fractured Mind"
 
@@ -21,6 +21,7 @@ Pneuma operates on distinct physiological levels, mirroring the human nervous sy
 * **The Stack:** NPU-accelerated, optimized models.
     * **Input:** `SenseVoice-RKNN` (Speech-to-Text).
     * **Output:** `paroli` (Text-to-Speech).
+    * **Router:** **Qwen 2.5 3B (Quantized)**. A tiny, efficient model for local routing and basic queries.
 * **Behavior:** These tasks never leave the local device. They are instant and private.
 
 ### Level 1.5: The Hybrids (Physical & Digital Bridge)
@@ -28,13 +29,13 @@ Pneuma operates on distinct physiological levels, mirroring the human nervous sy
 * **Hardware:** **"Hybrid Guardian"** nodes (Arduino UNO Q).
 * **The Stack:** A "Dual-Brain" architecture.
     * **Real-Time Brain (STM32 MCU):** Monitors environmental sensors (air, radiation, spectrum) with microsecond precision.
-    * **Linux Brain (Qualcomm NPU):** Runs quantized analysis models (Qualcomm SNPE) to filter noise and detect anomalies locally.
+    * **Linux Brain (Qualcomm NPU):** Runs **Qwen 2.5 0.5B (Quantized)** for on-device anomaly detection and sensor reasoning.
 * **Telemetry Optimization:** Sensor alerts are serialized using lightweight formats (e.g., Protocol Buffers or CBOR) to fit multiple readings into a single LoRa packet (~50-100 bytes).
 
 ### Level 2: The Cortex (Federated & Deep)
 * **Role:** Handling complex reasoning, generation, coding, and analysis ("Deep Thought").
 * **Hardware:** A swarm of "Guardian" nodes (Old Laptops, Orange Pi 5s, The Whetstone).
-* **The Stack:** A "Fractured" Mixture-of-Experts / Mixture-of-Agents.
+* **The Stack:** A "Fractured" Mixture-of-Experts / Mixture-of-Agents using the **Qwen 2.5** family.
 * **Behavior:** These tasks are routed across the Utility Fabric (Layer 2) and Backbone (Layer 3).
 
 ## 3. The "Cortex" Workflow: How a Thought is Formed
@@ -78,15 +79,21 @@ The results are sent back to the user's Local Moderator for final fusion.
 * **Evidence-Based:** Conflicting responses are resolved by preferring those with verifiable citations or test results.
 * **Streaming with Backfill:** The highest-confidence response streams immediately to the user. If a late-arriving expert provides a significantly better answer, the user receives a "Revised Answer" notification.
 
-### 3.1 The "Lightweight Moderator" Profile (For AIWT Nodes)
+## 4. The Model Stratigraphy: Qwen 2.5 Integration
 
-A core challenge is allowing low-power nodes (like the Sovereign AIWT with 4GB RAM) to manage this process. We utilize a "Project Manager" architecture.
+We have standardized on the **Qwen 2.5** family of open-weights models. This provides a unified, high-performance ecosystem with specialized variants for every tier of hardware.
 
-* **The Tiny Router (NPU):** Instead of a massive LLM, the AIWT runs a tiny, specialized classification model (e.g., TinyBERT or quantized Qwen-0.5B) on its NPU (<300MB footprint).
-* **The Editor (NPU):** For synthesis, the AIWT uses a small, specialized summarization model (e.g., `Phi-3-mini` quantized) to smooth responses.
-* **The Curator (Logic Fallback):** In ultra-low-power modes, the AIWT bypasses neural synthesis and uses logic-based selection (displaying the answer with the highest network confidence score).
+| Node Role | Hardware Example | Recommended Model | Primary Function |
+| :--- | :--- | :--- | :--- |
+| **AIWT Moderator** | Radxa Zero 3W (4GB RAM) | **Qwen 2.5 3B (Quantized)** | Lightweight Routing & Synthesis |
+| **Hybrid Guardian** | Arduino UNO Q (2GB RAM) | **Qwen 2.5 0.5B (Quantized)** | Sensor Anomaly Detection |
+| **General Guardian** | Old Laptop / SBC (8GB+ RAM) | **Qwen 2.5 7B** | General Knowledge Expert |
+| **Skill Guardian** | SBC / PC (16GB+ RAM) | **Qwen 2.5 Coder/Math 14B** | `[Code]` or `[Math]` Specialist |
+| **Genesis Node** | Rock 5B+ / High-End PC | **Qwen 2.5 72B** (or **Mixtral 8x7B**) | Flagship `[Research]` / Batch Processing |
 
-## 4. Implementation Strategy: "Petals" vs. "Agents"
+* **Why Qwen 2.5?** It offers superior performance at small sizes (0.5B, 3B, 7B), excellent multilingual support (29 languages), and specialized variants (Coder, Math) that perfectly fit our "Expert Symbolon" architecture. It is fully open-source (Apache 2.0) and privacy-respecting.
+
+## 5. Implementation Strategy: "Petals" vs. "Agents"
 
 To manage bandwidth physics, we use two different transport methods:
 
@@ -97,13 +104,13 @@ To manage bandwidth physics, we use two different transport methods:
     * **Used For:** Splitting a massive model across multiple devices *within the same house* (e.g., splitting a 70B model across The Whetstone and three laptops).
     * **Data:** Tensor Activations (Heavier).
 
-## 5. Resilience and Reputation
+## 6. Resilience and Reputation
 
 * **Skill Taxonomy & Benchmarks:** The network maintains a versioned ontology of skills. Guardians must pass automated benchmark suites (available in the `/benchmarks` repo directory) to claim a skill (e.g., passing unit tests for `[Code]`).
 * **Dynamic Reputation:** The Pneuma Vault tracks success rates. High-reputation nodes are prioritized during routing.
 * **Cached States:** Intermediate debate states are cached locally by the Moderator using an **LRU policy (10-minute TTL)** and are **encrypted at rest**. This allows resuming a thought if a link drops.
 
-## 6. Security and Privacy
+## 7. Security and Privacy
 
 * **Query Privacy:**
     * **Moderator-Side Encryption:** Queries are encrypted end-to-end between the user's Moderator and the selected Guardian using mesh-wide shared keys or per-session ephemeral keys. Layer 3 operators cannot read the traffic.
