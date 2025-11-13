@@ -156,4 +156,3 @@ message SensorData {
   float value = 2;
 }
 ```
-```
