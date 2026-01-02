@@ -13,7 +13,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN, ATTR_RSSI, ATTR_SNR, ATTR_SENDER, ATTR_TIMESTAMP
+from .const import DOMAIN, ATTR_RSSI, ATTR_SNR, ATTR_TOKENS_EARNED, ATTR_JOBS_COMPLETED
 from .gateway import LyceumGatewayDevice
 
 _LOGGER = logging.getLogger(__name__)
@@ -25,13 +25,22 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Lyceum Gateway sensors."""
-    gateway: LyceumGatewayDevice = hass.data[DOMAIN][entry.entry_id]
+    data = hass.data[DOMAIN][entry.entry_id]
+    gateway: LyceumGatewayDevice = data["gateway"]
+    guardian = data.get("guardian")
     
     entities = [
         LyceumLastMessageSensor(gateway, entry),
         LyceumMessageCountSensor(gateway, entry),
         LyceumRSSISensor(gateway, entry),
     ]
+    
+    # Add Guardian sensors if enabled
+    if guardian:
+        entities.extend([
+            GuardianTokensSensor(guardian, entry),
+            GuardianJobsSensor(guardian, entry),
+        ])
     
     async_add_entities(entities)
 
@@ -126,3 +135,56 @@ class LyceumRSSISensor(LyceumBaseSensor):
     @property
     def native_value(self) -> int:
         return self._gateway.last_rssi
+
+
+# Guardian sensors
+
+class GuardianBaseSensor(SensorEntity):
+    """Base class for Guardian sensors."""
+
+    def __init__(self, guardian, entry: ConfigEntry) -> None:
+        self._guardian = guardian
+        self._entry = entry
+        self._attr_has_entity_name = True
+
+    @property
+    def device_info(self) -> dict[str, Any]:
+        return {
+            "identifiers": {(DOMAIN, f"guardian_{self._guardian.config.node_id}")},
+            "name": f"Lyceum Guardian ({self._guardian.config.node_id})",
+            "manufacturer": "The Lyceum",
+            "model": "Guardian Node",
+            "sw_version": "0.1.0",
+        }
+
+
+class GuardianTokensSensor(GuardianBaseSensor):
+    """Sensor showing tokens earned by Guardian."""
+
+    _attr_name = "Tokens Earned"
+    _attr_icon = "mdi:currency-usd"
+    _attr_state_class = SensorStateClass.TOTAL_INCREASING
+
+    @property
+    def unique_id(self) -> str:
+        return f"{self._guardian.config.node_id}_tokens"
+
+    @property
+    def native_value(self) -> float:
+        return round(self._guardian._tokens_earned, 2)
+
+
+class GuardianJobsSensor(GuardianBaseSensor):
+    """Sensor showing jobs completed by Guardian."""
+
+    _attr_name = "Jobs Completed"
+    _attr_icon = "mdi:briefcase-check"
+    _attr_state_class = SensorStateClass.TOTAL_INCREASING
+
+    @property
+    def unique_id(self) -> str:
+        return f"{self._guardian.config.node_id}_jobs"
+
+    @property
+    def native_value(self) -> int:
+        return self._guardian._job_count

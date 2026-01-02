@@ -19,7 +19,8 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Lyceum Gateway binary sensors."""
-    gateway: LyceumGatewayDevice = hass.data[DOMAIN][entry.entry_id]
+    data = hass.data[DOMAIN][entry.entry_id]
+    gateway: LyceumGatewayDevice = data["gateway"]
     
     async_add_entities([
         LyceumConnectionSensor(gateway, entry),

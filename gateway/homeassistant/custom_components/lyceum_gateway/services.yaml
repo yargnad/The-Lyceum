@@ -37,3 +37,29 @@ relay_to_internet:
       description: Override the default relay server URL.
       selector:
         text:
+
+guardian_stats:
+  name: Get Guardian Stats
+  description: Get statistics about the Guardian node (tokens earned, jobs completed).
+
+start_symbolon:
+  name: Start Symbolon
+  description: Start an approved Symbolon application.
+  fields:
+    name:
+      name: Symbolon Name
+      description: Name of the Symbolon to start.
+      required: true
+      selector:
+        text:
+
+stop_symbolon:
+  name: Stop Symbolon
+  description: Stop a running Symbolon application.
+  fields:
+    name:
+      name: Symbolon Name
+      description: Name of the Symbolon to stop.
+      required: true
+      selector:
+        text:

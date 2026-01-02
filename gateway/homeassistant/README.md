@@ -92,10 +92,43 @@ automation:
 
 ## Backbone Mode
 
-When **Backbone Mode** is enabled, the gateway can relay messages between mesh nodes that are too far apart for direct LoRa communication. This uses your home internet as a bridge.
+When **Backbone Mode** is enabled, the gateway can relay messages between mesh nodes that are too far apart for direct LoRa communication.
 
-```
-[Node A] --LoRa--> [HA Gateway] --Internet--> [Relay Server] --Internet--> [Remote HA Gateway] --LoRa--> [Node B]
-```
+---
 
-This is intended for **bootstrapping only** - as mesh coverage grows, direct LoRa paths will replace internet relays.
+## Guardian Mode (Optional)
+
+Enable **Guardian Mode** to contribute your HA server's compute resources to the Pneuma network:
+
+| Setting | Description |
+|---------|-------------|
+| Guardian Enabled | Turn on compute contribution |
+| Skills | What to contribute: `relay`, `reflex_stt`, `reflex_tts`, `cortex`, `symbolon` |
+| CPU Limit | Max CPU % for jobs (default: 25%) |
+| Memory Limit | Max RAM in MB (default: 512) |
+| Symbolons | List of approved apps to host |
+| Earn Tokens | Participate in Proof-of-Utility |
+
+### Guardian Entities
+
+| Entity | Description |
+|--------|-------------|
+| `sensor.lyceum_guardian_tokens_earned` | Tokens earned from compute jobs |
+| `sensor.lyceum_guardian_jobs_completed` | Total jobs processed |
+
+### Guardian Services
+
+```yaml
+# Get Guardian stats
+service: lyceum_gateway.guardian_stats
+
+# Start a Symbolon
+service: lyceum_gateway.start_symbolon
+data:
+  name: "lyceum-weather"
+
+# Stop a Symbolon
+service: lyceum_gateway.stop_symbolon
+data:
+  name: "lyceum-weather"
+```
