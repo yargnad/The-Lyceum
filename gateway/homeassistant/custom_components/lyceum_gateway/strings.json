@@ -1,0 +1,62 @@
+{
+    "title": "Lyceum Gateway",
+    "config": {
+        "step": {
+            "user": {
+                "title": "Configure Lyceum LoRa Gateway",
+                "description": "Connect your E22-900T22U USB LoRa module to act as a Lyceum network gateway.\n\nDetected serial ports: {ports}",
+                "data": {
+                    "port": "Serial Port",
+                    "channel": "LoRa Channel (0-83)",
+                    "node_id": "Node ID",
+                    "aes_key": "AES-128/256 Key (hex, optional)",
+                    "backbone_mode": "Enable Internet Backbone Relay",
+                    "relay_url": "Backbone Relay URL"
+                }
+            }
+        },
+        "abort": {
+            "no_serial_ports": "No serial ports detected. Connect your E22 module and try again.",
+            "already_configured": "This port is already configured."
+        },
+        "error": {
+            "port_not_found": "Serial port not found.",
+            "invalid_key_length": "AES key must be 16, 24, or 32 bytes (32, 48, or 64 hex chars).",
+            "invalid_hex": "Invalid hexadecimal format."
+        }
+    },
+    "services": {
+        "send_message": {
+            "name": "Send Message",
+            "description": "Send a message over the Lyceum LoRa mesh.",
+            "fields": {
+                "message": {
+                    "name": "Message",
+                    "description": "The text message to send."
+                },
+                "destination": {
+                    "name": "Destination",
+                    "description": "Target node address (hex, e.g., 0x1234). Use 0xFFFF for broadcast."
+                },
+                "channel": {
+                    "name": "Channel",
+                    "description": "LoRa channel to use (overrides default)."
+                }
+            }
+        },
+        "relay_to_internet": {
+            "name": "Relay to Internet Backbone",
+            "description": "Forward a message through the internet for long-distance relay during network bootstrapping.",
+            "fields": {
+                "message": {
+                    "name": "Message",
+                    "description": "The message to relay."
+                },
+                "relay_url": {
+                    "name": "Relay URL",
+                    "description": "Override the default relay server URL."
+                }
+            }
+        }
+    }
+}

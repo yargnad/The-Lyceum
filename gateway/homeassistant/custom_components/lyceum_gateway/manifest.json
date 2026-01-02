@@ -1,0 +1,17 @@
+{
+    "domain": "lyceum_gateway",
+    "name": "Lyceum LoRa Gateway",
+    "version": "0.1.0",
+    "documentation": "https://github.com/yargnad/The-Lyceum",
+    "issue_tracker": "https://github.com/yargnad/The-Lyceum/issues",
+    "dependencies": [],
+    "codeowners": [
+        "@yargnad"
+    ],
+    "requirements": [
+        "pyserial>=3.5",
+        "pycryptodome>=3.18"
+    ],
+    "iot_class": "local_push",
+    "config_flow": true
+}

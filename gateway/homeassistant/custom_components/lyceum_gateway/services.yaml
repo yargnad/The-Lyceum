@@ -1,0 +1,39 @@
+send_message:
+  name: Send Message
+  description: Send a message over the Lyceum LoRa mesh.
+  fields:
+    message:
+      name: Message
+      description: The text message to send.
+      required: true
+      selector:
+        text:
+    destination:
+      name: Destination
+      description: Target node address (hex, e.g., 0x1234). Use 0xFFFF for broadcast.
+      default: 0xFFFF
+      selector:
+        text:
+    channel:
+      name: Channel
+      description: LoRa channel to use (overrides default).
+      selector:
+        number:
+          min: 0
+          max: 83
+
+relay_to_internet:
+  name: Relay to Internet Backbone
+  description: Forward a message through the internet for long-distance relay during network bootstrapping.
+  fields:
+    message:
+      name: Message
+      description: The message to relay.
+      required: true
+      selector:
+        text:
+    relay_url:
+      name: Relay URL
+      description: Override the default relay server URL.
+      selector:
+        text:

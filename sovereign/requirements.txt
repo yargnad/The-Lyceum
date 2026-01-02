@@ -1,0 +1,28 @@
+# Sovereign AIWT Requirements
+# 
+# Note: Many of these packages require ARM64 builds or
+# Rockchip-specific libraries installed on the Radxa Zero 3W.
+
+# Core async framework
+asyncio-mqtt>=0.16  # For future MQTT bridge
+
+# AI/ML (stubs - actual packages need Rockchip builds)
+# rknn-toolkit2  # Rockchip NPU - install from vendor
+# llama-cpp-python  # For Qwen - build with ARM64 support
+
+# Hardware interface
+pyserial>=3.5
+# RPi.GPIO  # Or gpiod for newer kernels
+# spidev  # For LoRa SPI
+# luma.oled  # For OLED display
+# smbus2  # For I2C
+
+# Audio
+# pyaudio  # Requires portaudio
+
+# Crypto (for Lyceum protocol)
+pycryptodome>=3.18
+
+# Testing
+pytest>=7.0
+pytest-asyncio>=0.21
